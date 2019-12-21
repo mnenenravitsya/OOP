@@ -1,0 +1,31 @@
+class PhoneNumberException(Exception):
+    pass
+ 
+def prepare_phone_number(phone: str)-> str:
+    pass
+ 
+def prepare_phone_number(phone: str) -> str:
+    phone = str(phone)
+    phone = phone.replace('/t', '').replace(' ', '').replace('-', '')
+    res = ""
+    bracket_open = False
+    phone = phone[1:] if phone.startswith("+") else phone
+    for e in phone:
+        if e.isdigit():
+            res += e
+        elif e == '(' and not bracket_open:
+            bracket_open = True
+            res += e
+        elif e == ')' and res[-4:].startswith('(') and res[-3].isdigit() and bracket_open:
+            res += e
+            bracket_open = False
+        else:
+            raise PhoneNumberException()
+    res = res.replace('(', '', 1).replace(')', '', 1)
+    if 10 != len(res) != 11 and not res.isdigit() or bracket_open:
+        raise PhoneNumberException()
+    if len(res) == 11 and not res.startswith(('8', '7')):
+        raise PhoneNumberException()
+    res = '8' + res if len(res) == 10 else res
+    res = "+7" + res[1:] if res.startswith(('7', '8')) else res
+    return "{} ({}) {}-{}-{}".format(res[:2], res[2:5], res[5:8], res[8:10], res[10:])
