@@ -1,0 +1,39 @@
+class PhoneNumberException(Exception):
+    pass
+ 
+def prepare_phone_number(phone: str)-> str:
+    phone_string = str(phone)
+    symbols = [[],[],[],[],[]]
+    number_digits = ''
+    if str(phone_string[0]) == '8' or str(phone_string[0:2]) == '+7':
+        for symbol in phone_string:
+            if symbol.isdigit():
+                number_digits += symbol
+            elif symbol == '+':
+                symbols[0].append('+')
+                if len(symbols[0]) > 1:
+                    raise PhoneNumberException()
+            elif symbol == '-':
+                symbols[1].append('-')
+                if len(symbols[1]) > 4:
+                    raise PhoneNumberException()
+            elif symbol == '(':
+                symbols[2].append('(')
+                if len(symbols[2]) > 1:
+                    raise PhoneNumberException()
+            elif symbol == ')':
+                symbols[3].append(')')
+                if len(symbols[3]) > 1:
+                    raise PhoneNumberException()
+            elif symbol == ' ':
+                symbols[4].append(' ')
+                if len(symbols[4]) > 24:
+                    raise PhoneNumberException()
+            else:
+                raise PhoneNumberException()
+        if len(number_digits) > 11:
+            raise PhoneNumberException()
+    else:
+        raise PhoneNumberException()
+    result = "+7 ({0}) {1}-{2}-{3}".format(number_digits[1:4],number_digits[4:7], number_digits[7:9], number_digits[9:11])
+    return result
