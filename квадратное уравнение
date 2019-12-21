@@ -1,0 +1,80 @@
+def solve_square_equation(expr: str)-> list:
+import re
+ 
+ 
+class SquareEquationException(Exception):
+    pass
+ 
+ 
+patterns = [r"^[+-]?[\d.]+\*x\^2[+-]?[\d.]+\*x[+-]?[\d.]+$",
+            r"^[+-]?[\d.]+\*x\^2[+-]?[\d.]+[+-]?[\d.]+\*x$",
+            r"^[+-]?[\d.]+\*x[+-]?[\d.]+\*x\^2[+-]?[\d.]+$",
+            r"^[+-]?[\d.]+\*x[+-]?[\d.]+[+-]?[\d.]+\*x\^2$",
+            r"^[+-]?[\d.]+[+-]?[\d.]+\*x\^2[+-]?[\d.]+\*x$",
+            r"^[+-]?[\d.]+[+-]?[\d.]+\*x[+-]?[\d.]+\*x\^2$"]
+ 
+ 
+def split_numbers(task: str) -> list:
+    task += "_"
+    result = []
+    n = ""
+    dot = False
+    for e in task:
+        if e.isdigit() or not n:
+            n += e
+        elif e == "." and dot:
+            raise SquareEquationException()
+        elif e == "." and not dot:
+            n += e
+            dot = True
+        else:
+            try:
+                result.append(float(n))
+                n = e
+                dot = False
+            except ValueError:
+                raise SquareEquationException()
+    return result
+ 
+ 
+def solve_square_equation(expr: str) -> list:
+    index = ''
+    for i, e in enumerate(patterns):
+        match = re.search(e, expr)
+        if match:
+            index = i
+    if index == '':
+        raise SquareEquationException()
+    s = split_numbers(re.sub(r"\*x\^2|\*x", "", expr))
+    if index == 0:
+        a, b, c = s
+    elif index == 1:
+        a, c, b = s
+    elif index == 2:
+        b, a, c = s
+    elif index == 3:
+        b, c, a = s
+    elif index == 4:
+        c, a, b = s
+    else:
+        c, b, a = s
+    if a == 0 and b == 0:
+        raise SquareEquationException()
+    elif a == 0:
+        return [-c / b]
+    elif b == 0 and c == 0:
+        return [0]
+    elif b == 0:
+        if -c / a < 0:
+            raise SquareEquationException()
+        else:
+            return sorted([(-c / a) ** 0.5, -(-c / a) ** 0.5])
+    elif c == 0:
+        return sorted([0, -b / a])
+    d = b ** 2 - 4 * a * c
+    if d < 0:
+        raise SquareEquationException()
+    elif d == 0:
+        return [-b / (2 * a)]
+    else:
+        return sorted([(-b + d ** 0.5) / (2 * a), (-b - d ** 0.5) / (2 * a)])
