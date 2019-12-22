@@ -1,0 +1,10 @@
+class MathExpressionException(Exception):
+    def __init__(self, text):
+        self.text = text
+
+def calculator_math_express(expr: str)-> float:
+    pass
+    try:
+        return float(eval(expr))
+    except Exception:
+        raise MathExpressionException('wrong expr')
