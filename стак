@@ -1,0 +1,29 @@
+class StackException(Exception):
+    def __init__(self, text):
+        self.text = text
+
+
+class Stack():
+    def __init__(self, type):
+        self.items = []
+        self.innerType = type
+
+    def __len__(self):
+        return len(self.items)
+
+    def push(self, item):
+        itemType = type(item)
+        if (itemType != self.innerType and not issubclass(itemType, self.innerType)):
+                raise StackException('type {0} not equals to {1}'.format(itemType, self.innerType))
+        self.items.append(item)
+
+    def pop(self):
+        if (len(self.items) == 0):
+            raise StackException('stack is empty')
+        return self.items.pop()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def clear(self):
+        self.items = []
